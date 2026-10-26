@@ -12,4 +12,8 @@ function getPostById(id) {
   return prisma.post.findUnique({ where: { id } });
 }
 
-module.exports = { createPost, listPosts, getPostById };
+function updatePost(id, data) {
+  return prisma.post.update({ where: { id }, data });
+}
+
+module.exports = { createPost, listPosts, getPostById, updatePost };
