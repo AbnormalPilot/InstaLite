@@ -14,4 +14,15 @@ async function list(req, res) {
   res.status(200).json(posts);
 }
 
-module.exports = { create, list };
+async function getOne(req, res) {
+  const id = Number(req.params.id);
+  const post = Number.isInteger(id)
+    ? await postsService.getPostById(id)
+    : null;
+  if (!post) {
+    return res.status(404).json({ error: "Post not found" });
+  }
+  res.status(200).json(post);
+}
+
+module.exports = { create, list, getOne };

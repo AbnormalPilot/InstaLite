@@ -8,4 +8,8 @@ function listPosts() {
   return prisma.post.findMany();
 }
 
-module.exports = { createPost, listPosts };
+function getPostById(id) {
+  return prisma.post.findUnique({ where: { id } });
+}
+
+module.exports = { createPost, listPosts, getPostById };
