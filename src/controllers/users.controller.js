@@ -1,4 +1,4 @@
-const prisma = require("../db");
+const usersService = require("../services/users.service");
 
 async function create(req, res) {
   const { username, email, fullname, bio } = req.body ?? {};
@@ -8,8 +8,11 @@ async function create(req, res) {
       .json({ error: "username, email and fullname are required" });
   }
   try {
-    const user = await prisma.user.create({
-      data: { username, email, fullname, bio },
+    const user = await usersService.createUser({
+      username,
+      email,
+      fullname,
+      bio,
     });
     res.status(201).json(user);
   } catch (err) {
@@ -21,14 +24,14 @@ async function create(req, res) {
 }
 
 async function list(req, res) {
-  const users = await prisma.user.findMany();
+  const users = await usersService.listUsers();
   res.status(200).json(users);
 }
 
 async function getOne(req, res) {
   const id = Number(req.params.id);
   const user = Number.isInteger(id)
-    ? await prisma.user.findUnique({ where: { id } })
+    ? await usersService.getUserById(id)
     : null;
   if (!user) {
     return res.status(404).json({ error: "User not found" });
@@ -43,10 +46,7 @@ async function update(req, res) {
     return res.status(404).json({ error: "User not found" });
   }
   try {
-    const user = await prisma.user.update({
-      where: { id },
-      data: { fullname, bio, isPrivate },
-    });
+    const user = await usersService.updateUser(id, { fullname, bio, isPrivate });
     res.status(200).json(user);
   } catch (err) {
     if (err.code === "P2025") {
@@ -62,7 +62,7 @@ async function remove(req, res) {
     return res.status(404).json({ error: "User not found" });
   }
   try {
-    await prisma.user.delete({ where: { id } });
+    await usersService.deleteUser(id);
     res.status(204).end();
   } catch (err) {
     if (err.code === "P2025") {
