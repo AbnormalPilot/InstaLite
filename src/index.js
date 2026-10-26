@@ -49,6 +49,26 @@ app.get("/users/:id", async (req, res) => {
   res.status(200).json(user);
 });
 
+app.patch("/users/:id", async (req, res) => {
+  const id = Number(req.params.id);
+  const { fullname, bio, isPrivate } = req.body ?? {};
+  if (!Number.isInteger(id)) {
+    return res.status(404).json({ error: "User not found" });
+  }
+  try {
+    const user = await prisma.user.update({
+      where: { id },
+      data: { fullname, bio, isPrivate },
+    });
+    res.status(200).json(user);
+  } catch (err) {
+    if (err.code === "P2025") {
+      return res.status(404).json({ error: "User not found" });
+    }
+    throw err;
+  }
+});
+
 app.listen(3000, () => {
   console.log("Server started on port 3000");
 });
