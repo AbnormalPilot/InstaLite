@@ -42,4 +42,20 @@ async function update(req, res) {
   }
 }
 
-module.exports = { create, list, getOne, update };
+async function remove(req, res) {
+  const id = Number(req.params.id);
+  if (!Number.isInteger(id)) {
+    return res.status(404).json({ error: "Post not found" });
+  }
+  try {
+    await postsService.deletePost(id);
+    res.status(204).end();
+  } catch (err) {
+    if (err.code === "P2025") {
+      return res.status(404).json({ error: "Post not found" });
+    }
+    throw err;
+  }
+}
+
+module.exports = { create, list, getOne, update, remove };
