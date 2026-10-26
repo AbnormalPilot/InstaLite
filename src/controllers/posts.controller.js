@@ -9,4 +9,9 @@ async function create(req, res) {
   res.status(201).json(post);
 }
 
-module.exports = { create };
+async function list(req, res) {
+  const posts = await postsService.listPosts();
+  res.status(200).json(posts);
+}
+
+module.exports = { create, list };

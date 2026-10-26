@@ -4,4 +4,8 @@ function createPost(data) {
   return prisma.post.create({ data });
 }
 
-module.exports = { createPost };
+function listPosts() {
+  return prisma.post.findMany();
+}
+
+module.exports = { createPost, listPosts };
