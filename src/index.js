@@ -14,7 +14,6 @@ app.get("/health", (req, res) => {
 });
 
 app.post("/users", async (req, res) => {
-  // Pick only allowed fields so clients can't set id, createdAt, etc.
   const { username, email, fullname, bio } = req.body ?? {};
   if (!username || !email || !fullname) {
     return res
@@ -37,6 +36,17 @@ app.post("/users", async (req, res) => {
 app.get("/users", async (req, res) => {
   const users = await prisma.user.findMany();
   res.status(200).json(users);
+});
+
+app.get("/users/:id", async (req, res) => {
+  const id = Number(req.params.id);
+  const user = Number.isInteger(id)
+    ? await prisma.user.findUnique({ where: { id } })
+    : null;
+  if (!user) {
+    return res.status(404).json({ error: "User not found" });
+  }
+  res.status(200).json(user);
 });
 
 app.listen(3000, () => {
